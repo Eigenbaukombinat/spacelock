@@ -39,7 +39,7 @@ def display_text(client, text):
 def mqtt_received(client, data, msg):
     global LAST_LOCK_ERROR
     doortopic = 'space/status/door'
-    if msg.topic == opentopic:
+    if msg.topic == doortopic:
         payload = msg.payload.decode('utf8')
         if payload == 'lock':
             if is_open():
@@ -48,12 +48,14 @@ def mqtt_received(client, data, msg):
                 LAST_LOCK_ERROR = True
             else:
                 display_text(client, 'Door locked. Wer das liest ist eingeschlossen.')
+                client.publish('space/bernd/speak/msg', 'Tür abgeschlossen, späis ist zu.')
         elif payload == 'unlock':
             if LAST_LOCK_ERROR:
                 display_text(client, 'WARNUNG: Door unlocked! Space war beim abschliessen noch offen!')
                 LAST_LOCK_ERROR = False
             else:
                 display_text(client, 'Door unlocked! Ggf. Spaceschalter bedienen und Zeit einstellen!')
+                client.publish('space/bernd/speak/msg', 'Tür aufgeschlossen, gegebenenfalls den Schalter bedienen und die Zeit einstellen.')
 
 mqtt_client.on_message = mqtt_received
 mqtt_client.loop_start()
