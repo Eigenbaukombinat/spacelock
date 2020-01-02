@@ -20,9 +20,9 @@ LAST_LOCK_ERROR = False
 
 def telnet(txt):
     try:
-        telnet = telnetlib.Telnet('192.168.21.148')
+        telnet = telnetlib.Telnet('vfddisplay.lan')
     except:
-        logging.error('Cannot connect to display, make sure it is on the network with IP 192.168.21.148')
+        logging.error('Cannot connect to display, make sure it is on the network with vfddisplay.lan')
         return
     telnet.write('\n\n'.encode('latin1'))
     telnet.write(chr(0x0D).encode('latin1')) #0x0D clear; 0x0F All Display; 0x0B scroll; 
@@ -35,7 +35,6 @@ def display_text(client, text):
     telnet(text)
     client.publish('display/ledlaufschrift/text', text)
 
-
 def mqtt_received(client, data, msg):
     global LAST_LOCK_ERROR
     doortopic = 'space/status/door'
@@ -43,18 +42,18 @@ def mqtt_received(client, data, msg):
         payload = msg.payload.decode('utf8')
         if payload == 'lock':
             if is_open():
-                display_text(client, 'WARNUNG - Tuer abgeschlossen, Space war offen.')
+                display_text(client, 'Tuer abgeschlossen, Space war offen.') # max 40 Zeichen
                 client.publish('space/status/error', 'Tuer wurde abgeschlossen, doch der Space war offen!')
                 LAST_LOCK_ERROR = True
             else:
-                display_text(client, 'Door locked. Wer das liest ist eingeschlossen.')
+                display_text(client, 'Tuer zu.Wer das liest ist eingeschlossen') #max 40 Zeichen
                 client.publish('space/bernd/speak/msg', 'Tür abgeschlossen, späis ist zu.')
         elif payload == 'unlock':
             if LAST_LOCK_ERROR:
-                display_text(client, 'WARNUNG: Door unlocked! Space war beim abschliessen noch offen!')
+                display_text(client, 'Tuer auf!Space b abschliessen offen') # max 40 Zeichen
                 LAST_LOCK_ERROR = False
             else:
-                display_text(client, 'Door unlocked! Ggf. Spaceschalter bedienen und Zeit einstellen!')
+                display_text(client, 'Tuer auf!Spaceschalter u Zeit bedienen!') # max 40 Zeichen
                 client.publish('space/bernd/speak/msg', 'Tür aufgeschlossen, gegebenenfalls den Schalter bedienen und die Zeit einstellen.')
 
 mqtt_client.on_message = mqtt_received
