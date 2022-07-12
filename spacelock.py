@@ -12,7 +12,7 @@ log = logging.getLogger(__name__)
 
 mqtt_client = mqtt.Client()
 mqtt_client.enable_logger(logger=log)
-mqtt_client.connect('putin')
+mqtt_client.connect('localhost')
 mqtt_client.subscribe('space/status/door')
 
 LAST_LOCK_ERROR = False
