@@ -2,7 +2,6 @@ from ebk_status import is_open
 import logging
 import paho.mqtt.client as mqtt
 import time
-import telnetlib
 
 import argparse
 parser = argparse.ArgumentParser(description='EBK space api status')
