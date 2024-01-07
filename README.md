@@ -15,6 +15,6 @@ via supervisor:
 ```
 [program:spacelock]
 directory = /home/<user>/spacelock
-command=/home/<user>/spacelock/bin/python /home/<user>/spacelock/spacelock.py
+command=/home/<user>/spacelock/bin/python /home/<user>/spacelock/spacelock.py --mqtt_broker=<mqtt host>
 user = <user>
 ```
